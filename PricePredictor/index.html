@@ -1,0 +1,79 @@
+<html>
+
+<head>
+    <title>Price predictor</title>
+    <script type="text/javascript" src="web3.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <script>
+        var web3 = new Web3(Web3.givenProvider);
+        var abi = JSON.parse(
+            '[{"inputs":[],"stateMutability":"payable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"winner","type":"string"}],"name":"Win","type":"event"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"price","type":"uint256"}],"name":"Join","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"price","type":"uint256"}],"name":"PickTheWinner","outputs":[],"stateMutability":"nonpayable","type":"function"}]'
+        );
+        var contract = new web3.eth.Contract(abi, "[put your contract address here]");
+
+        contract.events.Win({})
+            .on('data', function (event) {
+                alert("Winner: " + event.returnValues["winner"])
+            });
+
+        function connect() {
+            ethereum.request({
+                method: 'eth_requestAccounts'
+            });
+        }
+
+        function join() {
+            var name = document.getElementById('name').value;
+            var price = document.getElementById('price').value;
+			var bet = document.getElementById('bet').value;
+            if (price == '' || name == '' || bet == '')
+                alert('please provide data');
+            else {
+                contract.methods.Join(name, price).send({
+                    from: web3.currentProvider.selectedAddress,
+                    value: Web3.utils.toWei(bet, 'ether')
+                }).on('error', function (error, receipt) {
+                    alert(error);
+                });
+
+                document.getElementById('name').value = '';
+                document.getElementById('price').value = '';
+            }
+        }
+
+        function pickTheWinner() {
+            var price = document.getElementById('finalPrice').value;
+            if (price == '')
+                alert('please provide data');
+            else {
+                contract.methods.PickTheWinner(price).send({
+                    from: web3.currentProvider.selectedAddress
+                }).on('error', function (error, receipt) {
+                    console.log(error);
+                });
+
+                document.getElementById('finalPrice').value = '';
+            }
+        }
+    </script>
+
+    <h1>Price predictor</h1>
+    <div>
+        <button id="connect" onclick="connect();">Connect</button>
+    </div>
+    <div>
+        <span>Your name:</span> <input type="text" id="name" /><br />
+		<span>Your bet:</span> <input type="number" value="0.001" id="bet" /><br />
+        <span>Price:</span> <input type="number" id="price" /><br />
+        <button onclick="join();">Join</button>
+    </div>
+    <div>
+        <span>Final Price:</span> <input type="number" id="finalPrice" /><br />
+        <button onclick="pickTheWinner();">Pick the winner</button>
+    </div>
+</body>
+
+</html>

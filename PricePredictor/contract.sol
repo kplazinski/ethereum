@@ -34,6 +34,7 @@ contract PricePredictor{
         int bestResult = 0;
         address currentWinner;
         string memory winnersName;
+        
         for (uint i = 0; i < totalNumberOfPlayers; i++) {
            uint playerPrice = _players[i].prediction;
            int currentPrediction = int(playerPrice) - int(price);
@@ -42,7 +43,7 @@ contract PricePredictor{
                currentPrediction = currentPrediction * -1;
            }
            
-           if (bestResult == 0 || currentPrediction < bestResult) {
+           if (i == 0 || currentPrediction < bestResult) {
                 bestResult = currentPrediction;
                 currentWinner = _players[i].sender;
                 winnersName = _players[i].name;

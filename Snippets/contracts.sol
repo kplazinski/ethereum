@@ -15,12 +15,12 @@ contract SolidityExamples {
 	// external - can be used only by external contracts (cannot be called by other functiosn in the same contract)
 
 	// function can return some data, for example:
-	function returnFunction() public returns (uint) {
+	function returnFunction() public view returns (uint) {
 		return someData;
 	}
 	
 	// also function can return multiple values:
-	function returnMultipleFunction() public returns (uint, address) {
+	function returnMultipleFunction() public view returns (uint, address) {
 		// uint id
 		// address adr 
 		
@@ -28,7 +28,7 @@ contract SolidityExamples {
 	}
 	
 	// of can be type void - it will not return anything
-	function voidFunction() public() {
+	function voidFunction() public {
 	
 	}
 	
